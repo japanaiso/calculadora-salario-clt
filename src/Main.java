@@ -14,7 +14,7 @@ public class Main {
                 Locale.forLanguageTag("pt-BR")
         );
         do {
-        System.out.println("\n=========================70=");
+        System.out.println("\n==========================");
         System.out.println("CALCULADORA DE SALÁRIO CLT");
         System.out.println("==========================\n");
             boolean salarioValido = false;
