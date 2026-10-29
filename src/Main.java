@@ -5,6 +5,39 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public class Main {
+    static BigDecimal calcularInss(BigDecimal salario) {
+        BigDecimal limite1 = new BigDecimal("1621.00");
+        BigDecimal limite2 = new BigDecimal("2902.84");
+        BigDecimal limite3 = new BigDecimal("4354.27");
+        BigDecimal teto = new BigDecimal("8475.55");
+
+        BigDecimal baseInss = salario.min(teto);
+
+        BigDecimal faixa1 = baseInss.min(limite1);
+        BigDecimal faixa2 = BigDecimal.ZERO;
+        BigDecimal faixa3 = BigDecimal.ZERO;
+        BigDecimal faixa4 = BigDecimal.ZERO;
+
+        if (baseInss.compareTo(limite1) > 0) {
+            faixa2 = baseInss.min(limite2).subtract(limite1);
+        }
+
+        if (baseInss.compareTo(limite2) > 0) {
+            faixa3 = baseInss.min(limite3).subtract(limite2);
+        }
+
+        if (baseInss.compareTo(limite3) > 0) {
+            faixa4 = baseInss.subtract(limite3);
+        }
+
+        BigDecimal inss = faixa1.multiply(new BigDecimal("0.075"))
+                .add(faixa2.multiply(new BigDecimal("0.09")))
+                .add(faixa3.multiply(new BigDecimal("0.12")))
+                .add(faixa4.multiply(new BigDecimal("0.14")));
+
+        return inss.setScale(2, RoundingMode.HALF_UP);
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         BigDecimal sl = BigDecimal.ZERO;
@@ -36,43 +69,11 @@ public class Main {
                     salarioValido = true;
                 } else {
                     // Letras, sinais, R$, número negativo ou mais de duas casas são rejeitados.
-                    System.out.println("Entrada inválida. Digite, por exemplo, 4000 ou 4000,50.");
+                    System.out.println("\nEntrada inválida. Digite, por exemplo, 4000 ou 4000,50.\n");
                 }
             }
-            // Limites das faixas de contribuição do INSS em 2026.
-            BigDecimal limite1 = new BigDecimal("1621.00");
-            BigDecimal limite2 = new BigDecimal("2902.84");
-            BigDecimal limite3 = new BigDecimal("4354.27");
-            BigDecimal teto = new BigDecimal("8475.55");
-// O INSS não é calculado sobre a parte que passa do teto.
-            BigDecimal baseInss = sl.min(teto);
-// Começamos com zero e vamos somar a contribuição de cada faixa.
-            BigDecimal inss = BigDecimal.ZERO;
-// A primeira faixa vai do início do salário até R$ 1.621,00.
-            BigDecimal faixa1 = baseInss.min(limite1);
-// As outras faixas começam vazias.
-            BigDecimal faixa2 = BigDecimal.ZERO;
-            BigDecimal faixa3 = BigDecimal.ZERO;
-            BigDecimal faixa4 = BigDecimal.ZERO;
-// Se o salário passou de R$ 1.621,00, calculamos o pedaço da segunda faixa.
-            if (baseInss.compareTo(limite1) > 0) {
-                faixa2 = baseInss.min(limite2).subtract(limite1);
-            }
-// Se passou de R$ 2.902,84, calculamos o pedaço da terceira faixa.
-            if (baseInss.compareTo(limite2) > 0) {
-                faixa3 = baseInss.min(limite3).subtract(limite2);
-            }
-// Se passou de R$ 4.354,27, calculamos o pedaço da quarta faixa.
-            if (baseInss.compareTo(limite3) > 0) {
-                faixa4 = baseInss.subtract(limite3);
-            }
-// Aplicamos a alíquota de cada faixa somente ao pedaço correspondente.
-            inss = faixa1.multiply(new BigDecimal("0.075"))
-                    .add(faixa2.multiply(new BigDecimal("0.09")))
-                    .add(faixa3.multiply(new BigDecimal("0.12")))
-                    .add(faixa4.multiply(new BigDecimal("0.14")));
-// Arredondamos a soma final para centavos.
-            inss = inss.setScale(2, RoundingMode.HALF_UP);
+            // calcula inss.
+            BigDecimal inss = calcularInss(sl);
             //base de calculo irrf
             BigDecimal descontoSimplificado = new BigDecimal("607.20");
             BigDecimal deducaoIrrf;
@@ -158,8 +159,17 @@ public class Main {
             System.out.println("Percentual de descontos: "
                     + percentualDescontos.toPlainString() + "%");
             System.out.println("\n------------------------------------\n");
-            System.out.println("Quer Calcular Denovo? S/N");
-            cont = scanner.nextLine();
-        }while (cont.equalsIgnoreCase("S"));
+            System.out.println("Quer calcular de novo? S/N");
+
+            do {
+                cont = scanner.nextLine().trim();
+
+                if (!cont.equalsIgnoreCase("S") && !cont.equalsIgnoreCase("N")) {
+                    System.out.println("\nResposta inválida. Digite apenas S ou N.\n");
+                    System.out.println("Quer calcular de novo? S/N");
+                }
+            } while (!cont.equalsIgnoreCase("S") && !cont.equalsIgnoreCase("N"));
+
+        } while (cont.equalsIgnoreCase("S"));
     }
 }
