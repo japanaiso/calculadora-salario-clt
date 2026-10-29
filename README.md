@@ -56,6 +56,14 @@ Os casos acima são conferências manuais. O código colado nesta versão não i
 
 O PDF mostra INSS de R$ 373,41 para salário bruto de R$ 4.000,00. Aplicando progressivamente as faixas oficiais de 2026 indicadas pelo próprio desafio, o resultado é R$ 368,60. Por isso, o líquido calculado por este programa difere do valor ilustrativo do PDF.
 
+## Testes automatizados
+
+O projeto usa JUnit 5 para verificar os cálculos e as validações da calculadora.
+
+No IntelliJ IDEA, abra `MainTest.java`, clique com o botão direito dentro do arquivo e selecione **Run 'MainTest'**.
+
+Os testes cobrem cenários como salário zero, faixas do INSS, teto previdenciário, faixas e redução do IRRF, entrada inválida e valores com centavos.
+
 ## Fontes oficiais
 
 - [Tabela de contribuição mensal do INSS](https://www.gov.br/inss/pt-br/direitos-e-deveres/inscricao-e-contribuicao/tabela-de-contribuicao-mensal)
